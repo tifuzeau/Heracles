@@ -5,7 +5,6 @@ import sys
 import shutil
 import errno
 
-AUTO_YES = False
 
 def print_usage(arg):
     print sys.argv[0] + " usage: --yes for auto yes"
@@ -75,7 +74,6 @@ class Project:
         self.in_path = os.getcwd() + "/" + name + "/"
         self.template_crea = [];
         self.template_cp = [];
-        self.template_path = os.getcwd() + "/template"
 
     def Addtemplate_crea(self, tab):
         self.template_crea.append(Template_crea(tab['name'], tab['path']));
@@ -92,11 +90,23 @@ class Project:
             temp.run_file();
 
 
-def default_crea_c(pro, ext_path = ""):
+#def parseur(argv):
+#    for arg in argv:
+#        if arg == "--yes":
+#            g_auto_yes = True;
+#            print g_auto_yes
+#        elif arg == "--help":
+#           print_usage();
+#           sys.exit(1);
+#        else:
+#            print_usage();
+
+
+def default_crea_c(pro):
     pwd = os.getcwd();
-    pro.Addtemplate_crea({ 'name' : "srcs", 'path' : pro.in_path + ext_path });
-    pro.Addtemplate_crea({ 'name' : "include", 'path' : pro.in_path + ext_path});
-    pro.Addtemplate_crea({ 'name' : ".conf.mk", 'path' : pro.in_path + ext_path});
+    pro.Addtemplate_crea({ 'name' : "srcs", 'path' : pro.in_path });
+    pro.Addtemplate_crea({ 'name' : "include", 'path' : pro.in_path});
+    pro.Addtemplate_crea({ 'name' : ".conf.mk", 'path' : pro.in_path});
 
 def default_cp_c(pro):
     pwd = os.getcwd();
@@ -108,23 +118,9 @@ def default_cp_c(pro):
         'src_path' : deflaut_path + "root.mk",
         'dst_path' : pro.in_path + "Makefile"});
 
-def custom_crea(pro):
-    ret = raw_input('subdir in srcs ? [y/N]: ').strip();
-    if ret == "N" or ret == "n" or ret == "":
-        return ;
-    sub = raw_input('all subdir in same line : ').strip();
-    sub2 = sub.split(' ');
-    for subdir in sub2:
-        pro.Addtemplate_crea({ 'name' : subdir, 'path' : pro.in_path + "srcs/"});
-        pro.Addtemplate_cp({ 'name' : "Makefile",
-            'src_path' : pro.template_path + "/mod.mk",
-            'dst_path' : pro.in_path + "srcs/" + subdir + "/Makefile"})
-        default_crea_c(pro, "srcs/" + subdir + "/");
-
 def c_thing(pro):
     default_crea_c(pro);
     default_cp_c(pro);
-    custom_crea(pro);
     pro.run_crea();
     cp_dir(os.getcwd() + "/template/libft", pro.in_path + "libft")
     pro.run_cp();
@@ -138,9 +134,8 @@ support_lang = [
         { 'name' : "C", 'fonction' : c_thing },
         { 'name' : "C++", 'fonction' : cpp }]
 
-
 def main():
-    print "Welcome"
+    #parseur(sys.argv[1:])
     name = raw_input('Projet name: ');
     lang = raw_input('Language: ');
     name = name.strip();
@@ -152,6 +147,7 @@ def main():
         if case['name'] == lang:
             case['fonction'](pro);
             break;
+
 if __name__ == "__main__":
     main();
 

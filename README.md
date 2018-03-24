@@ -29,3 +29,7 @@ Goal: Properly free the allocated memory in the C file provided with the project
 ### Labour 05: Stymphalian Birds
 
 Goal: In any language, create a project template generator to use for future projects.
+
+### Labour 06: Cretan Bull
+
+Goal: Create a champion (AI) to play in the infamous Corewar arena!
